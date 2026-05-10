@@ -1,0 +1,12 @@
+langchain
+langchain-community
+langchain-classic
+langchain-core
+langchain-groq
+duckduckgo-search
+python-dotenv
+pinecone-client
+langchain-pinecone
+sentence-transformers
+pypdf
+streamlit
