@@ -3,6 +3,8 @@ langchain-community
 langchain-classic
 langchain-core
 langchain-groq
+langchain-huggingface
+langchain-text-splitters
 duckduckgo-search
 python-dotenv
 pinecone-client
