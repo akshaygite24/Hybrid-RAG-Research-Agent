@@ -4,8 +4,10 @@ import os
 
 load_dotenv()
 
-llm = ChatGroq(
-    model="llama-3.3-70b-versatile",
-    temperature=0,
-    groq_api_key=os.getenv("GROQ_API_KEY")
-)
+def get_llm(model: str = "llama-3.1-8b-instant", temperature: float = 0):
+    llm = ChatGroq(
+        model=model,
+        temperature=temperature,
+        groq_api_key=os.getenv("GROQ_API_KEY")
+    )
+    return llm
