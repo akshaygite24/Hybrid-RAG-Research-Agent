@@ -10,5 +10,6 @@ python-dotenv
 pinecone-client
 langchain-pinecone
 sentence-transformers
+ddgs
 pypdf
 streamlit
