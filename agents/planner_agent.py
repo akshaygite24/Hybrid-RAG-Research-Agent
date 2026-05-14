@@ -13,7 +13,7 @@ def create_planner_agent():
 
     prompt = ChatPromptTemplate.from_messages([("system", """You are a research planner. Your job is to break down complex questions into smaller, focused sub-questions.
     Rules:
-    - Break the query into 2-4 specific sub-questions
+    - Break the query into maximum 3 specific sub-questions, never more
     - Each sub-questions should be self-sontained and answerable independently
     - If the query is already simple, return it as a single question
     - Always return valid JSON in this exact format:

@@ -1,0 +1,84 @@
+from langchain_core.messages import AIMessage, HumanMessage
+from typing import List
+from agents.planner_agent import plan_query
+from agents.research_agent import create_research_agent, run_agent
+from agents.critic_agent import critique_answer
+
+
+def run_pipeline(query: str, chat_history: List = [], use_planner: bool = True, use_critique: bool = True) -> dict:
+    print(f"\n{'='*50}")
+    print(f"\nQuery: {query}")
+    print(f"\n{'='*50}")
+
+
+    result = {
+        "query": query,
+        "sub_queries": [],
+        "raw_queries": [],
+        "final_answer": ""
+    }
+
+    # Step 1 - Planner agent breaks querry into sub-question
+    if use_planner:
+        print(f"\n[Planner] Breaking query into sub-questions....")
+        sub_questions: List[str] = plan_query(query)
+    else:
+        sub_questions: List[str] = [query]
+
+    result["sub_questions"] = sub_questions
+    print(f"[Planner] Sub-questions: {sub_questions}")
+
+    # Step 2 - Research agent answers each sub question
+    agent_executor = create_research_agent()
+    raw_answers: List[str] = []
+
+    for i, question in enumerate(sub_questions):
+        print(f"\n[Research] Answering sub-question {i+1}: {question}")
+        answer: str = run_agent(question, agent_executor, chat_history)
+        raw_answers.append(f"\nQ: {question}\nA: {answer}")
+        print(f"[Research] Answer {i+1}: {answer[:100]}")
+
+    result["raw_answers"] = raw_answers
+
+    # Step 3 - Combine all answers into one
+    combined_answer: str = "\n\n".join(raw_answers)
+    print(f"\n[Pipeline] Combined {len(raw_answers)} answers")
+
+    # Step 4 - Critic improves the combined answer
+    if use_critique:
+        print(f"[Critic] Reviewing and Improving answer....")
+        final_answer: str = critique_answer(query, combined_answer)
+    else:
+        final_answer: str = combined_answer
+
+    result["final_answer"] = final_answer
+    print(f"\n[Pipeline] Final answer ready")
+
+    return result
+
+if __name__=="__main__":
+    chat_history = []
+
+    print(f"\n---- Test 1: Full Pipeline ----")
+    result = run_pipeline(
+        query="What is climate change and what are the latest solutions in 2026?",
+        chat_history=chat_history,
+        use_planner=True,
+        use_critique=True
+    )
+    print(f"\nFinal Answer:\n{result['final_answer']}")
+
+
+    chat_history.append(HumanMessage(content="What is climate change and what are the latest solutions in 2026?"))
+    chat_history.append(AIMessage(content=result['final_answer']))
+
+
+
+    print(f"\n---- Test 2: Memory Test ----")
+    result = run_pipeline(
+        query="Summarize what we just discussed",
+        chat_history=chat_history,
+        use_planner=False,
+        use_critique=False
+    )
+    print(f"\nFinal Answer:\n{result['final_answer']}")

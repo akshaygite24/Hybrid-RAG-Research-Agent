@@ -30,9 +30,9 @@ def create_research_agent():
     agent_executor = AgentExecutor(
         agent=agent,
         tools=tools,
-        verbose=True,
+        verbose=False,
         handle_parsing_errors=True,
-        max_iterations=5
+        max_iterations=10
     )
 
     return agent_executor
