@@ -4,17 +4,24 @@ from agents.planner_agent import plan_query
 from agents.research_agent import create_research_agent, run_agent
 from agents.critic_agent import critique_answer
 
+def is_conversational(query: str) -> bool:
+    conversational = ["hi", "hello", "hey", "thanks", "bye", "how are you", "what's up", "thank you", "whats up", "good", "great"]
+    return query.lower().strip() in conversational or len(query.split()) < 3
 
-def run_pipeline(query: str, chat_history: List = [], use_planner: bool = True, use_critique: bool = True) -> dict:
+
+def run_pipeline(query: str, chat_history: List = [], use_planner: bool = True, use_critic: bool = True) -> dict:
     print(f"\n{'='*50}")
     print(f"\nQuery: {query}")
     print(f"\n{'='*50}")
 
+    if is_conversational(query):
+        use_planner = False
+        use_critic = False
 
     result = {
         "query": query,
-        "sub_queries": [],
-        "raw_queries": [],
+        "sub_questions": [],
+        "raw_answers": [],
         "final_answer": ""
     }
 
@@ -45,7 +52,7 @@ def run_pipeline(query: str, chat_history: List = [], use_planner: bool = True, 
     print(f"\n[Pipeline] Combined {len(raw_answers)} answers")
 
     # Step 4 - Critic improves the combined answer
-    if use_critique:
+    if use_critic:
         print(f"[Critic] Reviewing and Improving answer....")
         final_answer: str = critique_answer(query, combined_answer)
     else:
@@ -64,7 +71,7 @@ if __name__=="__main__":
         query="What is climate change and what are the latest solutions in 2026?",
         chat_history=chat_history,
         use_planner=True,
-        use_critique=True
+        use_critc=True
     )
     print(f"\nFinal Answer:\n{result['final_answer']}")
 
@@ -72,13 +79,12 @@ if __name__=="__main__":
     chat_history.append(HumanMessage(content="What is climate change and what are the latest solutions in 2026?"))
     chat_history.append(AIMessage(content=result['final_answer']))
 
-
-
     print(f"\n---- Test 2: Memory Test ----")
     result = run_pipeline(
         query="Summarize what we just discussed",
         chat_history=chat_history,
         use_planner=False,
-        use_critique=False
+        use_critic=False
     )
     print(f"\nFinal Answer:\n{result['final_answer']}")
+

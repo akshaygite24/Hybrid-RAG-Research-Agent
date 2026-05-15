@@ -11,5 +11,6 @@ pinecone-client
 langchain-pinecone
 sentence-transformers
 ddgs
+torchvision
 pypdf
 streamlit
