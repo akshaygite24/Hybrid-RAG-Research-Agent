@@ -126,7 +126,6 @@ if query := st.chat_input("Ask Anything - I'll search you documents and the web.
                     
         if result:
             st.markdown(result["final_answer"])
-
             st.session_state.chat_history.append(HumanMessage(content=query))
             st.session_state.chat_history.append(AIMessage(content=result["final_answer"]))
             st.session_state.messages.append({
