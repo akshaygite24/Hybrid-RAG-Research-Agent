@@ -5,8 +5,22 @@ from agents.research_agent import create_research_agent, run_agent
 from agents.critic_agent import critique_answer
 
 def is_conversational(query: str) -> bool:
+    query_lower = query.lower().strip()
     conversational = ["hi", "hello", "hey", "thanks", "bye", "how are you", "what's up", "thank you", "whats up", "good", "great"]
-    return query.lower().strip() in conversational or len(query.split()) < 3
+    # follow up - refers to previous conversation
+    follow_up_keywords = ["summarize", "summary", "recap", "conclude", "conclude this", "summarize this", "what we did", "what have we", "we discussed", "tell me more", "elaborate", "explain more", "continue"]
+
+    if query_lower in conversational:
+        return True
+    
+    for keyword in follow_up_keywords:
+        if query_lower.startswith(keyword):
+            return True
+
+    if len(query.split()) < 3:
+        return True
+    
+    return False
 
 
 def run_pipeline(query: str, chat_history: List = [], use_planner: bool = True, use_critic: bool = True) -> dict:
@@ -22,13 +36,16 @@ def run_pipeline(query: str, chat_history: List = [], use_planner: bool = True, 
         "query": query,
         "sub_questions": [],
         "raw_answers": [],
-        "final_answer": ""
+        "final_answer": "",
+        "used_planner": False,
+        "used_critic": False
     }
 
     # Step 1 - Planner agent breaks querry into sub-question
     if use_planner:
         print(f"\n[Planner] Breaking query into sub-questions....")
         sub_questions: List[str] = plan_query(query)
+        result["used_planner"] = True
     else:
         sub_questions: List[str] = [query]
 
@@ -42,7 +59,7 @@ def run_pipeline(query: str, chat_history: List = [], use_planner: bool = True, 
     for i, question in enumerate(sub_questions):
         print(f"\n[Research] Answering sub-question {i+1}: {question}")
         answer: str = run_agent(question, agent_executor, chat_history)
-        raw_answers.append(f"\nQ: {question}\nA: {answer}")
+        raw_answers.append(answer)
         print(f"[Research] Answer {i+1}: {answer[:100]}")
 
     result["raw_answers"] = raw_answers
@@ -55,6 +72,7 @@ def run_pipeline(query: str, chat_history: List = [], use_planner: bool = True, 
     if use_critic:
         print(f"[Critic] Reviewing and Improving answer....")
         final_answer: str = critique_answer(query, combined_answer)
+        result["used_critic"] = True
     else:
         final_answer: str = combined_answer
 
@@ -71,7 +89,7 @@ if __name__=="__main__":
         query="What is climate change and what are the latest solutions in 2026?",
         chat_history=chat_history,
         use_planner=True,
-        use_critc=True
+        use_critic=True
     )
     print(f"\nFinal Answer:\n{result['final_answer']}")
 

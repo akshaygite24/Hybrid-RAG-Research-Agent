@@ -94,8 +94,7 @@ if query := st.chat_input("Ask Anything - I'll search you documents and the web.
 
     with st.chat_message("assistant"):
         with st.status("Running research pipeline....", expanded=True) as status:
-
-            st.write("Planner breaking down query....")
+            st.write("Thinking!")
             time.sleep(0.5)
 
             try:
@@ -106,17 +105,19 @@ if query := st.chat_input("Ask Anything - I'll search you documents and the web.
                     use_critic=use_critic
                 )
 
-                if result["sub_questions"]:
-                    st.write("Sub-questions identified:")
-                    for q in result["sub_questions"]:
-                        st.write(f"{q}")
+                if result["used_planner"]:
+                    st.write("Planner breaking down query....")
+                    if len(result["sub_questions"]) > 1:
+                        st.write("Sub-questions identified:")
+                        for q in result["sub_questions"]:
+                            st.write(f"{q}")
                 
                 st.write("Researching with tools....")
-                st.write("Critic reviewing answer....")
+                if result["used_critic"]:
+                    st.write("Critic reviewing answer....")
                 status.update(label="Done!", state="complete", expanded=False)
 
             except Exception as e:
-
                 error_details = traceback.format_exc()
                 status.update(label="Failed!", state="error")
                 st.error(f"Pipeline error: {str(e)}")
