@@ -9,8 +9,9 @@ class RAGInput(BaseModel):
 class RAGTool(BaseTool):
     name: str = "document_search"
     description: str = (
-        "Use this to search and retrieve information from uploaded PDF documents."
-        "Use when the user asks about content from their uploaded files or PDFs"
+        "Use this to search and retrieve information from uploaded PDF documents. "
+        "Use this when user mentions PDF, document, uploaded file, or any specific topic that might be in the document. "
+        "Use when the user asks about content from their uploaded files or PDFs. "
     )
     args_schema: Type[BaseModel] = RAGInput
 

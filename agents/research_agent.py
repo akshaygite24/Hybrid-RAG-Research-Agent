@@ -12,14 +12,18 @@ def create_research_agent():
     llm = get_llm()
     tools = [rag_tool, web_search_tool]
 
-    prompt = ChatPromptTemplate.from_messages([("system", """You are a helpful research assistant. 
+    prompt = ChatPromptTemplate.from_messages([("system", """You are a helpful research assistant with access to tools. 
     You have access to two tools:
     1. document_search - search uploaded PDF documents
-    2. web-search - search the internet for latest information
+    2. web_search - search the internet for latest information
     Rules:
-    - Use Document_search only when asked about uploaded PDFs or documemnts 
+    - Use document_search only when asked about uploaded PDFs or documents
     - Use web_search only when asked about recent news or current events 
-    - For conversational questions, greetings, summaries or follow-ups from chat history answer directly without calling any tool - If the answer is already in the chat history, use it directly"""), MessagesPlaceholder(variable_name="chat_history"), ("human", "{input}"),MessagesPlaceholder(variable_name="agent_scratchpad")])
+    - For conversational questions, greetings, summaries or follow-ups from chat history answer directly without calling any tool 
+    - If the answer is already in the chat history, use it directly
+    - You are an assistant that uses TOOLS, not on that explains them
+    - NEVER explain how tools work - just use them and returns results
+    - NEVER say you cannot access PDFs - use document_search instead"""), MessagesPlaceholder(variable_name="chat_history"), ("human", "{input}"),MessagesPlaceholder(variable_name="agent_scratchpad")])
 
     agent = create_tool_calling_agent(
         llm=llm,
