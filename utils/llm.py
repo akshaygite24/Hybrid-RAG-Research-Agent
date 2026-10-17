@@ -4,7 +4,7 @@ import os
 
 load_dotenv()
 
-def get_llm(model: str = "llama-3.3-70b-versatile", temperature: float = 0):
+def get_llm(model: str = "openai/gpt-oss-120b", temperature: float = 0):
     llm = ChatGroq(
         model=model,
         temperature=temperature,
