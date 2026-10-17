@@ -41,7 +41,10 @@ def create_research_agent():
 
     return agent_executor
 
-def run_agent(query: str, agent_executor: AgentExecutor,chat_history: list = []) -> str:
+def run_agent(query: str, agent_executor: AgentExecutor,chat_history: list | None = None) -> str:
+    if chat_history is None:
+        chat_history = []
+        
     try:
         response = agent_executor.invoke({
             "input": query,
