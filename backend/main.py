@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 
 from backend.schemas import ResearchRequest
 from pipeline import run_pipeline
@@ -25,6 +25,16 @@ def research(request: ResearchRequest):
         for message in request.chat_history
     ]
 
-    result = run_pipeline(request.query, chat_history, request.use_planner, request.use_critic)
-
+    try:
+        result = run_pipeline(
+            request.query, 
+            chat_history, 
+            request.use_planner, 
+            request.use_critic
+        )
+    except Exception:
+        raise HTTPException(
+            status_code=500,
+            detail='Research pipeline failed'
+        )
     return result

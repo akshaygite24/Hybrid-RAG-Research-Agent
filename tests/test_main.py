@@ -95,3 +95,21 @@ def test_research_missing_query():
 
     assert response.status_code == 422
 
+
+@patch('backend.main.run_pipeline')
+def research_pipeline_failure(mock_run_pipeline):
+    mock_run_pipeline.side_effect = RuntimeError('Internal details')
+    response = client.post(
+        '/research',
+        json={
+            'query': 'What is RAG?',
+            'chat_history': [],
+            'use_planner': False,
+            'use_critic': False
+        }
+    )
+
+    assert response.status_code == 500
+    assert response.json() == {
+        'detail': 'Research pipeline failed'
+    }
