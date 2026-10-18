@@ -45,14 +45,11 @@ def run_agent(query: str, agent_executor: AgentExecutor,chat_history: list | Non
     if chat_history is None:
         chat_history = []
         
-    try:
-        response = agent_executor.invoke({
-            "input": query,
-            "chat_history": chat_history
-        })
-        return response["output"]
-    except Exception as e:
-        return f"Agent failed: {str(e)}"
+    response = agent_executor.invoke({
+        "input": query,
+        "chat_history": chat_history
+    })
+    return response["output"]
 
 
 if __name__=="__main__":

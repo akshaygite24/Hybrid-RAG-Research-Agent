@@ -97,7 +97,7 @@ def test_research_missing_query():
 
 
 @patch('backend.main.run_pipeline')
-def research_pipeline_failure(mock_run_pipeline):
+def test_research_pipeline_failure(mock_run_pipeline):
     mock_run_pipeline.side_effect = RuntimeError('Internal details')
     response = client.post(
         '/research',
