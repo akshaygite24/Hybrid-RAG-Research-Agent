@@ -17,7 +17,11 @@ def test_health():
 def test_research(mock_run_pipeline):
     mock_run_pipeline.return_value = {
         'query': 'What is RAG?',
-        'final_answer': 'RAG combines retrieval and generation'
+        'sub_questions': ['What is RAG?'],
+        'raw_answers': ['RAG combines retrieval and generation'],
+        'final_answer': 'RAG combines retrieval and generation',
+        'used_planner': False,
+        'used_critic': False
     }
 
     response = client.post(
@@ -33,7 +37,11 @@ def test_research(mock_run_pipeline):
     assert response.status_code == 200
     assert response.json() == {
         'query': 'What is RAG?',
-        'final_answer': 'RAG combines retrieval and generation'
+        'sub_questions': ['What is RAG?'],
+        'raw_answers': ['RAG combines retrieval and generation'],
+        'final_answer': 'RAG combines retrieval and generation',
+        'used_planner': False,
+        'used_critic': False
     }
     mock_run_pipeline.assert_called_once_with(
         "What is RAG?",

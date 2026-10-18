@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException
 
-from backend.schemas import ResearchRequest
+from backend.schemas import ResearchRequest, ResearchResponse
 from pipeline import run_pipeline
 
 from langchain_core.messages import HumanMessage, AIMessage
@@ -16,7 +16,7 @@ def health():
         'message': 'Research Agent API is running'
     }
 
-@app.post('/research')
+@app.post('/research', response_model=ResearchResponse)
 def research(request: ResearchRequest):
     chat_history = [
         HumanMessage(content=message.content)
