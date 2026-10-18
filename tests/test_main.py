@@ -87,12 +87,7 @@ def test_research_missing_query():
     response = client.post(
         '/research',
         json={
-            'chat_history': [
-                {
-                    'role': 'admin',
-                    'content': 'What is RAG?'
-                }
-            ],
+            'chat_history': [],
             'use_planner': False,
             'use_critic': False
         }
